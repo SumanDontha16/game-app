@@ -13,7 +13,9 @@ const getRandomCell = (i) => Math.floor(Math.random() * i)
 export const Board = () => {
   const board = useSelector(selectBoard)
   const game = useSelector(selectGame)
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+
+  // console.log('..........',JSON.stringify(board));
 
   const [player, setPlayer] = useState(game.currentPlayer)
   const [result, setResult] = useState({ winner: "none", state: "none" })
@@ -25,66 +27,82 @@ export const Board = () => {
   //   } else {
   //     setPlayer("X")
   //   }
-  // }, [board])
+  // }, [board[0]])
 
   useEffect(() => {
     if (result.state !== "none") {
-      alert(`Game Finished! Winning Player: ${result.winner}`)
+      alert(`Game Finished! Winning Player: ${result.winner}`);
+      restartGame();
     }
-  }, [result])
+  }, [result]);
 
-  const chooseSquare = sqaure => {
-    board.map((val, idx) => console.log(val))
+  const chooseSquare = (row, cell) => {
+    console.log('ROW:', row);
+    console.log("CELL:", cell)
+    dispatch(selectCell(game.currentPlayer, row, cell));
+    checkWin();
   }
 
+  const restartGame = () => {
+    setPlayer("O");
+  };
 
-  // board.map((val) => {
-  //   val.map((item, idx) => {
-  //     if (idx === sqaure && item === "") {
-  //       return player
-  //     }
-  //     return item
-  //   })
-  //   if (player === "X") {
-  //     setPlayer("0")
-  //   } else {
-  //     setPlayer("X")
-  //   }
-  // })
 
-  // const checkWin = () => {
-  //   Patterns.forEach((currentPattern) => {
-  //     const firstPlayer = board[currentPattern[0]];
-  //     if (firstPlayer === "") return;
-  //     let foundWinnerPattern = true;
-  //     currentPattern.forEach((idx) => {
-  //       if (board[idx] !== firstPlayer) {
-  //         foundWinnerPattern = false
-  //       }
-  //     })
-  //     if (foundWinnerPattern) {
-  //       setResult({ winner: player, state: "won" })
-  //     }
-  //   })
-  // }
+  const checkWin1 = () => {
+    Patterns.forEach((currPattern) => {
+      const firstPlayer = board[currPattern[0]];
+      if (firstPlayer == "") return;
+      let foundWinningPattern = true;
+      currPattern.forEach((idx) => {
+        if (board[idx] != firstPlayer) {
+          foundWinningPattern = false;
+        }
+      });
+
+      if (foundWinningPattern) {
+        setResult({ winner: player, state: "Won" });
+      }
+    });
+  };
+
+  const allEqual = currentPattern => currentPattern.every(v => v === currentPattern[0])
+
+
+  const checkWin = () => {
+    Patterns.forEach((currentPattern) => {
+      currentPattern.forEach((patternCell) => {
+        board.forEach((boardCell) => {
+
+        })
+      });
+
+      const status = allEqual(currentPattern);
+      console.log('Status:', status);
+      if (status) {
+        setResult({ winner: currentPattern[0], state: "won" });
+        return;
+      }
+
+    });
+  }
 
   return (
     <div className="BoardContainer">
       <div className="Board">
         <div className="row">
-          <Square val={board[0]} chooseSquare={() => chooseSquare(0)} />
-          <Square val={board[1]} chooseSquare={() => chooseSquare(1)} />
-          <Square val={board[2]} chooseSquare={() => chooseSquare(2)} />
+          <Square val={board[0][0]} chooseSquare={() => chooseSquare(0, 0)} />
+          <Square val={board[0][1]} chooseSquare={() => chooseSquare(0, 1)} />
+          <Square val={board[0][2]} chooseSquare={() => chooseSquare(0, 2)} />
         </div>
         <div className="row">
-          <Square val={board[3]} chooseSquare={() => chooseSquare(3)} />
-          <Square val={board[4]} chooseSquare={() => chooseSquare(4)} />
-          <Square val={board[5]} chooseSquare={() => chooseSquare(5)} />
+          <Square val={board[1][0]} chooseSquare={() => chooseSquare(1, 0)} />
+          <Square val={board[1][1]} chooseSquare={() => chooseSquare(1, 1)} />
+          <Square val={board[1][2]} chooseSquare={() => chooseSquare(1, 2)} />
         </div>
         <div className="row">
-          <Square val={board[6]} chooseSquare={() => chooseSquare(6)} />
-          <Square val={board[7]} chooseSquare={() => chooseSquare(7)} />
-          <Square val={board[8]} chooseSquare={() => chooseSquare(8)} />
+          <Square val={board[2][0]} chooseSquare={() => chooseSquare(2, 0)} />
+          <Square val={board[2][1]} chooseSquare={() => chooseSquare(2, 1)} />
+          <Square val={board[2][2]} chooseSquare={() => chooseSquare(2, 2)} />
         </div>
         <button onClick={() => dispatch(
           selectCell(

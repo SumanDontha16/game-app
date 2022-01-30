@@ -7,7 +7,7 @@ export const createBoard = (i) =>
     .map(_ =>
       Array(i)
         .fill(null)
-    )
+    );
 
 export const board = (state = createBoard(3), action) => {
   switch (action.type) {
